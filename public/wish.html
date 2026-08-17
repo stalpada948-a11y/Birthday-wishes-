@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="loading" class="screen active">
+        <h2>Loading Surprise...</h2>
+    </div>
+
+    <div id="introScreen" class="screen hidden">
+        <h1>Hey... 👀</h1>
+        <p>Someone has a little surprise for you...</p>
+        <button id="openSurpriseBtn">Open My Surprise ✨</button>
+    </div>
+
+    <div id="mainWishScreen" class="screen hidden">
+        <h3 id="displayReceiver"></h3>
+        <h1 class="glow-text">HAPPY BIRTHDAY</h1>
+        
+        <div class="letter-box">
+            <h4>You have one unread message 💌</h4>
+            <p id="displayLetter" class="letter-content"></p>
+        </div>
+
+        <div class="footer">
+            <p id="displaySender"></p>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
+
