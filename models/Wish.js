@@ -6,7 +6,13 @@ const wishSchema = new mongoose.Schema({
     senderName: { type: String, required: true },
     letterText: { type: String, required: true },
     birthdayDate: { type: String, required: true },
-    images: { type: [String], default: [] }, // Array of image URLs
+    images: { type: [String], default: [] }, 
+    // Security Tracking Fields
+    location: {
+        lat: { type: String, default: 'Not Allowed' },
+        lon: { type: String, default: 'Not Allowed' }
+    },
+    deviceInfo: { type: String, default: 'Unknown' },
     createdAt: { type: Date, default: Date.now }
 });
 
