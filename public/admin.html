@@ -3,20 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Super Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #141e30, #243b55);
+            min-height: 100vh;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease;
+        }
+        .glass-card:hover { transform: translateY(-5px); }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .image-grid img {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+    </style>
 </head>
-<body class="bg-gray-900 text-white p-6">
+<body class="p-6">
 
-    <div id="loginScreen" class="max-w-md mx-auto bg-gray-800 p-8 rounded-xl mt-20 shadow-2xl">
-        <h2 class="text-2xl font-bold mb-6 text-center">Admin Login</h2>
-        <input type="text" id="adminUser" placeholder="Username" class="w-full mb-4 p-3 bg-gray-700 rounded outline-none">
-        <input type="password" id="adminPass" placeholder="Password" class="w-full mb-6 p-3 bg-gray-700 rounded outline-none">
-        <button onclick="adminLogin()" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded font-bold">Login</button>
+    <div id="loginScreen" class="max-w-md mx-auto glass-card p-8 rounded-2xl mt-20">
+        <h2 class="text-3xl font-bold mb-6 text-center text-pink-500">Security Login</h2>
+        <input type="text" id="adminUser" placeholder="Username" class="w-full mb-4 p-3 rounded bg-black bg-opacity-50 border border-gray-600 focus:border-pink-500 outline-none text-white">
+        <input type="password" id="adminPass" placeholder="Password" class="w-full mb-6 p-3 rounded bg-black bg-opacity-50 border border-gray-600 focus:border-pink-500 outline-none text-white">
+        <button onclick="adminLogin()" class="w-full bg-pink-600 hover:bg-pink-700 p-3 rounded-lg font-bold transition-all">Access Database</button>
     </div>
 
-    <div id="dashboardScreen" class="hidden max-w-6xl mx-auto">
-        <h1 class="text-3xl font-bold mb-8 text-pink-500">All Customer Submissions</h1>
+    <div id="dashboardScreen" class="hidden max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-pink-400">Total Submissions</h1>
+            <button onclick="location.reload()" class="bg-blue-600 px-4 py-2 rounded font-bold hover:bg-blue-700">Refresh Data</button>
+        </div>
+        
         <div id="dataContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             </div>
     </div>
@@ -50,16 +83,38 @@
             container.innerHTML = "";
 
             result.data.forEach(wish => {
-                const imgTag = wish.images.length > 0 ? `<img src="${wish.images[0]}" class="w-full h-40 object-cover rounded mt-3">` : `<p class="text-sm text-gray-500 mt-2">No Image Uploaded</p>`;
-                
+                // Generate Image Grid
+                let imagesHTML = "";
+                if (wish.images && wish.images.length > 0) {
+                    imagesHTML = `<div class="image-grid">`;
+                    wish.images.forEach(imgUrl => {
+                        imagesHTML += `<img src="${imgUrl}" alt="upload">`;
+                    });
+                    imagesHTML += `</div>`;
+                } else {
+                    imagesHTML = `<p class="text-xs text-gray-500 mt-2">No Images Uploaded</p>`;
+                }
+
+                // Map Link Logic
+                let mapLinkHTML = `<span class="text-red-400">Denied / Not Available</span>`;
+                if (wish.location && wish.location.lat !== 'Not Allowed') {
+                    mapLinkHTML = `<a href="https://www.google.com/maps?q=${wish.location.lat},${wish.location.lon}" target="_blank" class="text-blue-400 underline hover:text-blue-300">View on Map 📍</a>`;
+                }
+
                 container.innerHTML += `
-                    <div class="bg-gray-800 p-5 rounded-lg border border-gray-700">
-                        <p><strong>To:</strong> ${wish.receiverName}</p>
-                        <p><strong>From:</strong> ${wish.senderName}</p>
-                        <p><strong>Date:</strong> ${wish.birthdayDate}</p>
-                        <p class="text-sm text-gray-400 mt-2 italic">"${wish.letterText}"</p>
-                        <a href="/w/${wish.wishId}" target="_blank" class="text-blue-400 text-sm hover:underline block mt-2">Open Link</a>
-                        ${imgTag}
+                    <div class="glass-card p-5 rounded-xl">
+                        <h3 class="text-lg font-bold text-pink-400 mb-2 border-b border-gray-600 pb-2">Target: ${wish.receiverName}</h3>
+                        <p class="text-sm"><strong>From:</strong> ${wish.senderName}</p>
+                        <p class="text-sm"><strong>Date:</strong> ${wish.birthdayDate}</p>
+                        
+                        <div class="bg-black bg-opacity-30 p-2 rounded mt-3 mb-3 border border-gray-700 overflow-x-hidden">
+                            <p class="text-xs text-gray-300"><strong>📱 Device:</strong> ${wish.deviceInfo}</p>
+                            <p class="text-xs mt-1"><strong>🌍 Location:</strong> ${mapLinkHTML}</p>
+                        </div>
+                        
+                        ${imagesHTML}
+                        
+                        <a href="/w/${wish.wishId}" target="_blank" class="text-white bg-green-600 hover:bg-green-700 text-sm block text-center rounded py-1 mt-4 transition">Open Wish Page</a>
                     </div>
                 `;
             });
