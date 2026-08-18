@@ -1,42 +1,27 @@
 const express = require('express');
 const router = express.Router();
 const Wish = require('../models/Wish');
-const { nanoid } = require('nanoid');
 
-// Create a new wish page
-router.post('/create', async (req, res) => {
+// Admin Login Route
+router.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    
+    // Aapka custom username aur password
+    if (username === 'sumit@1123' && password === 'sumit@1123') {
+        res.status(200).json({ success: true, message: 'Login Success' });
+    } else {
+        res.status(401).json({ success: false, message: 'Galat Username ya Password!' });
+    }
+});
+
+// Get all users data for Admin Dashboard
+router.get('/all-wishes', async (req, res) => {
     try {
-        const { adminPass, receiverName, senderName, letterText, birthdayDate, images } = req.body;
-
-        // Basic Admin Authentication
-        if (adminPass !== process.env.ADMIN_PASS) {
-            return res.status(401).json({ success: false, message: 'Invalid Admin Password' });
-        }
-
-        const wishId = nanoid(8); // Generates an 8-character unique ID
-
-        const newWish = new Wish({
-            wishId,
-            receiverName,
-            senderName,
-            letterText,
-            birthdayDate,
-            images
-        });
-
-        await newWish.save();
-
-        res.status(201).json({ 
-            success: true, 
-            message: 'Wish page created successfully!',
-            link: `/w/${wishId}`
-        });
-
+        const allWishes = await Wish.find().sort({ createdAt: -1 }); // Naya data upar aayega
+        res.status(200).json({ success: true, data: allWishes });
     } catch (error) {
-        console.error(error);
         res.status(500).json({ success: false, message: 'Server Error' });
     }
 });
 
 module.exports = router;
-
