@@ -3,10 +3,9 @@ const router = express.Router();
 const Wish = require('../models/Wish');
 const { nanoid } = require('nanoid');
 
-// User creates a wish (No admin password needed here anymore)
 router.post('/create', async (req, res) => {
     try {
-        const { receiverName, senderName, letterText, birthdayDate, images } = req.body;
+        const { receiverName, senderName, letterText, birthdayDate, images, location, deviceInfo } = req.body;
         const wishId = nanoid(8); 
 
         const newWish = new Wish({
@@ -15,7 +14,9 @@ router.post('/create', async (req, res) => {
             senderName,
             letterText,
             birthdayDate,
-            images
+            images,
+            location,
+            deviceInfo
         });
 
         await newWish.save();
@@ -31,7 +32,6 @@ router.post('/create', async (req, res) => {
     }
 });
 
-// Fetch wish data by ID for the final page
 router.get('/data/:id', async (req, res) => {
     try {
         const wishData = await Wish.findOne({ wishId: req.params.id });
