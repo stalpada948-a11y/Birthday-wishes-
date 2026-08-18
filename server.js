@@ -12,11 +12,12 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
-// IMPORTANT: Limit badha di gayi hai taaki user easily photo upload kar sake
+
+// IMPORTANT: Badi images aur multiple files ke data ko handle karne ke liye 50mb limit
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Serve Static Files
+// Serve Static Files (HTML, CSS, JS frontend files)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Database Connection
@@ -30,7 +31,7 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use('/api/admin', adminRoutes);
 app.use('/api/wish', wishRoutes);
 
-// Frontend Routes
+// Frontend Routes (Pages)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -47,3 +48,4 @@ app.get('/w/:id', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
