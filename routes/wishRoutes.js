@@ -3,6 +3,7 @@ const router = express.Router();
 const Wish = require('../models/Wish');
 const { nanoid } = require('nanoid');
 
+// Create Wish Route
 router.post('/create', async (req, res) => {
     try {
         const { receiverName, senderName, letterText, birthdayDate, images, location, deviceInfo } = req.body;
@@ -27,18 +28,25 @@ router.post('/create', async (req, res) => {
             link: `/w/${wishId}`
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Server Error' });
+        console.error("DETAILED SERVER ERROR:", error);
+        res.status(500).json({ success: false, message: error.message });
     }
 });
 
-router.get('/data/:id', async (req, res) => {
+// Fetch Wish Data Route (For Receiver Page)
+router.get('/data/:wishId', async (req, res) => {
     try {
-        const wishData = await Wish.findOne({ wishId: req.params.id });
-        if (!wishData) return res.status(404).json({ success: false, message: 'Wish not found' });
-        res.status(200).json({ success: true, data: wishData });
+        const { wishId } = req.params;
+        const wish = await Wish.findOne({ wishId });
+
+        if (!wish) {
+            return res.status(404).json({ success: false, message: 'Wish not found' });
+        }
+
+        res.status(200).json({ success: true, data: wish });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Server Error' });
+        console.error("FETCH ERROR:", error);
+        res.status(500).json({ success: false, message: error.message });
     }
 });
 
