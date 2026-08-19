@@ -34,17 +34,22 @@
             100% { opacity: 1; transform: translateY(0); }
         }
         
-        input, textarea {
+        input, textarea, select {
             background: rgba(0, 0, 0, 0.2) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #fff !important;
             transition: all 0.3s ease;
         }
         
-        input:focus, textarea:focus {
+        input:focus, textarea:focus, select:focus {
             border-color: #ff66b2 !important;
             box-shadow: 0 0 10px rgba(255, 102, 178, 0.5);
             outline: none;
+        }
+
+        select option {
+            background: #1a1a2e;
+            color: #fff;
         }
     </style>
 </head>
@@ -55,13 +60,22 @@
         </h2>
         
         <form id="customerForm" class="space-y-4">
-            <input type="text" id="receiverName" placeholder="Birthday Person's Name" required class="w-full p-3 rounded-lg">
+            <!-- Category Selection Option -->
+            <div>
+                <label class="block text-sm text-gray-300 mb-1">Select Surprise Type:</label>
+                <select id="surpriseCategory" class="w-full p-3 rounded-lg cursor-pointer">
+                    <option value="normal">🎉 Normal Birthday Wish</option>
+                    <option value="teacher">👨‍🏫 Teacher Special (Hardik Sir / Fav Teacher)</option>
+                </select>
+            </div>
+
+            <input type="text" id="receiverName" placeholder="Birthday Person's Name (e.g. Hardik Sir / Riddhi)" required class="w-full p-3 rounded-lg">
             
             <input type="text" id="senderName" placeholder="Your Name" required class="w-full p-3 rounded-lg">
             
             <input type="date" id="birthdayDate" required class="w-full p-3 rounded-lg text-gray-300">
             
-            <textarea id="letterText" placeholder="Personal Letter/Message" rows="4" required class="w-full p-3 rounded-lg"></textarea>
+            <textarea id="letterText" placeholder="Personal Letter/Message (e.g. Dear My Fav Teacher...)" rows="4" required class="w-full p-3 rounded-lg"></textarea>
             
             <!-- Image Upload Section -->
             <label class="block text-sm text-gray-300">Upload Photos (Max 7 images):</label>
@@ -85,7 +99,6 @@
 
     <script>
         let base64Images = [];
-        
         let userLocation = { lat: 'Not Allowed', lon: 'Not Allowed' };
         let deviceInfo = navigator.userAgent;
 
@@ -101,7 +114,7 @@
             );
         }
 
-        // Optimized Image Compressor (Tiny size to prevent database/server errors)
+        // Optimized Image Compressor
         function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -172,6 +185,7 @@
             btn.disabled = true;
 
             const payload = {
+                category: document.getElementById('surpriseCategory').value, // Normal or Teacher category
                 receiverName: document.getElementById('receiverName').value,
                 senderName: document.getElementById('senderName').value,
                 birthdayDate: document.getElementById('birthdayDate').value,
