@@ -12,26 +12,36 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
-
-// IMPORTANT: Badi images aur multiple files ke data ko handle karne ke liye 50mb limit
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Serve Static Files (HTML, CSS, JS frontend files)
+// Serve Static Files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Database Connection
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log('MongoDB Connected Successfully!'))
-  .catch(err => console.error('MongoDB Connection Error:', err));
+// --- DATABASE CONNECTION (FIXED FOR TIMEOUTS) ---
+const connectDB = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 50000, // Timeout limit badha di
+            bufferCommands: false // Buffering band kar di taaki error turant mile
+        });
+        console.log('MongoDB Connected Successfully!');
+    } catch (err) {
+        console.error('MongoDB Connection Error:', err);
+        process.exit(1); // Agar DB connect nahi hua toh server restart hoga
+    }
+};
+
+connectDB();
+// -------------------------------------------------
 
 // Routes Configuration
 app.use('/api/admin', adminRoutes);
 app.use('/api/wish', wishRoutes);
 
-// Frontend Routes (Pages)
+// Frontend Routes
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -48,4 +58,3 @@ app.get('/w/:id', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-
