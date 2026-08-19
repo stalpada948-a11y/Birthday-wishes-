@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            /* Premium Dark Gradient Background */
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             min-height: 100vh;
             display: flex;
@@ -18,7 +17,6 @@
             padding: 20px;
         }
         
-        /* Glassmorphism Effect */
         .glass-panel {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(15px);
@@ -27,7 +25,6 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
         
-        /* Smooth Fade In Animation */
         .fade-in {
             animation: fadeIn 1s ease-in-out forwards;
         }
@@ -37,7 +34,6 @@
             100% { opacity: 1; transform: translateY(0); }
         }
         
-        /* Custom Input Styling */
         input, textarea {
             background: rgba(0, 0, 0, 0.2) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
@@ -67,6 +63,7 @@
             
             <textarea id="letterText" placeholder="Personal Letter/Message" rows="4" required class="w-full p-3 rounded-lg"></textarea>
             
+            <!-- Image Upload Section -->
             <label class="block text-sm text-gray-300">Upload Photos (Max 7 images):</label>
             <input type="file" id="imageUpload" accept="image/*" multiple class="w-full p-2 rounded-lg text-sm text-gray-300 cursor-pointer">
             <p id="fileCountText" class="text-xs text-pink-400 mt-1 hidden"></p>
@@ -76,6 +73,7 @@
             </button>
         </form>
 
+        <!-- Result Section -->
         <div id="resultContainer" class="mt-6 hidden p-4 rounded-lg bg-black bg-opacity-40 text-center fade-in">
             <p class="mb-2 text-green-400 font-semibold">Page Successfully Created! 🎉</p>
             <input type="text" id="generatedLink" readonly class="w-full p-2 bg-gray-900 rounded text-sm text-gray-300 mb-3 text-center">
@@ -88,11 +86,9 @@
     <script>
         let base64Images = [];
         
-        // Security Data Variables
         let userLocation = { lat: 'Not Allowed', lon: 'Not Allowed' };
-        let deviceInfo = navigator.userAgent; // Gets browser & phone info
+        let deviceInfo = navigator.userAgent;
 
-        // Request Location on page load
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -105,8 +101,7 @@
             );
         }
 
-        // --- MAGIC AUTO-COMPRESSOR FUNCTION ---
-        // Ye badi size ki photo ko bina quality zyada loss kiye kb me convert kar dega
+        // Optimized Image Compressor (Tiny size to prevent database/server errors)
         function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -114,8 +109,8 @@
                     const img = new Image();
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 800; // Max width ko 800px pe limit kiya hai
-                        const MAX_HEIGHT = 800;
+                        const MAX_WIDTH = 500;
+                        const MAX_HEIGHT = 500;
                         let width = img.width;
                         let height = img.height;
 
@@ -136,8 +131,7 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // 0.6 ka matlab 60% quality jisse size bahut kam ho jayega
-                        resolve(canvas.toDataURL('image/jpeg', 0.6)); 
+                        resolve(canvas.toDataURL('image/jpeg', 0.4)); 
                     };
                     img.src = e.target.result;
                 };
@@ -145,34 +139,32 @@
             });
         }
 
-        // Handle up to 7 Images Selection with Compression
         document.getElementById('imageUpload').addEventListener('change', async function(e) {
             const files = e.target.files;
             const fileCountText = document.getElementById('fileCountText');
             
             if (files.length > 7) {
                 alert("Please select a maximum of 7 images only.");
-                e.target.value = ""; // Clear selection
+                e.target.value = ""; 
                 fileCountText.classList.add('hidden');
                 return;
             }
 
-            fileCountText.innerText = "Compressing photos... Please wait⏳";
+            fileCountText.innerText = "Optimizing photos... Please wait⏳";
             fileCountText.classList.remove('hidden');
-            document.getElementById('submitBtn').disabled = true; // Disable button while compressing
+            document.getElementById('submitBtn').disabled = true;
             
-            base64Images = []; // reset array
+            base64Images = [];
 
             for (let i = 0; i < files.length; i++) {
                 const compressedBase64 = await compressImage(files[i]);
                 base64Images.push(compressedBase64);
             }
 
-            fileCountText.innerText = `${files.length} file(s) selected and optimized! ✅`;
-            document.getElementById('submitBtn').disabled = false; // Enable button again
+            fileCountText.innerText = `${files.length} file(s) optimized successfully! ✅`;
+            document.getElementById('submitBtn').disabled = false;
         });
 
-        // Form Submission Logic
         document.getElementById('customerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
@@ -200,7 +192,7 @@
                 if (result.success) {
                     document.getElementById('resultContainer').classList.remove('hidden');
                     document.getElementById('generatedLink').value = window.location.origin + result.link;
-                    document.getElementById('customerForm').classList.add('hidden'); // Form ko hide kar denge
+                    document.getElementById('customerForm').classList.add('hidden');
                 } else {
                     alert('Error: ' + result.message);
                 }
@@ -212,12 +204,11 @@
             btn.disabled = false;
         });
 
-        // Copy Link Function
         function copyLink() {
             const linkInput = document.getElementById('generatedLink');
             linkInput.select();
             document.execCommand('copy');
-            alert("Link Copied Successfully! Now you can share it.");
+            alert("Link Copied Successfully!");
         }
     </script>
 </body>
