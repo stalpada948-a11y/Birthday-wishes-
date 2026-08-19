@@ -3,184 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday! 🎁</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Happy Birthday Surprise! ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Sacramento&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(135deg, #0d0015, #2b003a, #0d0015);
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
+        * {
             margin: 0;
-            overflow-x: hidden;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
-
-        .screen {
+        body {
+            background: radial-gradient(circle at center, #1b0f2e 0%, #090410 100%);
+            color: #ffffff;
             min-height: 100vh;
+            overflow-x: hidden;
+            text-align: center;
+        }
+        .screen {
             display: none;
+            min-height: 100vh;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            pointer-events: none;
         }
-
-        .active { display: flex; }
-
-        .glass-box {
-            background: rgba(255, 255, 255, 0.05);
+        .screen.active {
+            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+            position: relative;
+        }
+        h1, h2 {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .script-font {
+            font-family: 'Sacramento', cursive;
+            font-size: 3.5rem;
+            color: #ff758c;
+        }
+        .btn-custom {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255, 65, 108, 0.5);
+            margin-top: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn-custom:active {
+            transform: scale(0.95);
+        }
+        /* Gift Box Styles */
+        .gift-container {
+            cursor: pointer;
+            animation: bounce 2s infinite ease-in-out;
+            margin: 30px 0;
+        }
+        .gift-box-icon {
+            font-size: 90px;
+            filter: drop-shadow(0 10px 20px rgba(255, 117, 140, 0.4));
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(3deg); }
+        }
+        /* Letter Card */
+        .letter-card {
+            background: rgba(255, 255, 255, 0.06);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(255, 105, 180, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 25px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            text-align: left;
+            margin: 20px 0;
         }
-
-        .glow-text {
-            text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f;
+        .letter-card p {
+            color: #e0e0e0;
+            line-height: 1.8;
+            font-size: 1rem;
         }
-
-        .fade-in { animation: fadeIn 1.5s ease-in-out forwards; }
-        
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .photo-gallery {
+        /* Photo Gallery Grid */
+        .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin-top: 25px;
+            max-width: 450px;
             width: 100%;
+            margin-top: 20px;
         }
-
-        .photo-gallery img {
+        .gallery-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+        .gallery-item img {
             width: 100%;
-            height: 150px;
+            height: 160px;
             object-fit: cover;
             border-radius: 12px;
-            border: 2px solid rgba(255, 102, 178, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
-        .photo-gallery img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(255, 102, 178, 0.6);
+        .gallery-item span {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #ff9a9e;
+            font-weight: 500;
         }
-
-        button {
-            transition: all 0.3s ease;
+        /* Floating Confetti / Hearts */
+        .floating-element {
+            position: absolute;
+            pointer-events: none;
+            animation: floatUp 4s linear infinite;
         }
-        button:active {
-            transform: scale(0.95);
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div id="loadingScreen" class="screen active">
-        <h2 class="text-2xl font-bold text-pink-400 animate-pulse">Loading your surprise... ✨</h2>
+    <div id="screen-1" class="screen active">
+        <h2 class="script-font" style="font-size: 4rem; color: #ff9a9e;">Hello there... ✨</h2>
+        <p style="color: #b19cd9; font-size: 1.1rem; margin: 15px 0;">Someone special has created a magical surprise just for you.</p>
+        <button class="btn-custom" onclick="startExperience()">OPEN SURPRISE 🎁</button>
     </div>
 
-    <div id="introScreen" class="screen">
-        <h1 class="text-4xl font-bold mb-4">Hey... 👀</h1>
-        <p class="text-lg text-gray-300 mb-8">Someone has a little surprise for you...</p>
-        <button id="openSurpriseBtn" class="bg-gradient-to-r from-pink-600 to-purple-600 px-8 py-3 rounded-full font-bold text-lg shadow-[0_0_15px_rgba(255,102,178,0.5)] hover:shadow-[0_0_25px_rgba(255,102,178,0.8)]">
-            Open My Surprise 🎁
-        </button>
-    </div>
-
-    <div id="mainWishScreen" class="screen p-4 py-10">
-        <div class="glass-box p-6 md:p-10 rounded-2xl w-full max-w-2xl fade-in flex flex-col justify-between">
-            <div>
-                <h3 id="displayReceiver" class="text-xl md:text-2xl text-pink-300 mb-2"></h3>
-                <h1 class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500 glow-text mb-6">
-                    HAPPY BIRTHDAY!
-                </h1>
-                
-                <div class="bg-black bg-opacity-40 p-5 rounded-xl border border-gray-700 text-left mb-6">
-                    <h4 class="text-pink-400 text-sm mb-3 font-semibold tracking-wider">💌 MESSAGE FOR YOU</h4>
-                    <p id="displayLetter" class="text-gray-200 leading-relaxed text-sm md:text-base whitespace-pre-wrap"></p>
-                </div>
-
-                <div id="galleryContainer" class="hidden">
-                    <h4 class="text-pink-400 text-sm mt-8 mb-2 font-semibold tracking-wider text-left">📸 LITTLE MEMORIES</h4>
-                    <div id="photoGallery" class="photo-gallery">
-                        </div>
-                </div>
-
-                <div class="mt-8 border-t border-gray-700 pt-5 text-right">
-                    <p id="displaySender" class="text-pink-400 italic text-lg font-semibold"></p>
-                </div>
-            </div>
-
-            <div class="mt-12 pt-6 border-t border-gray-800 text-center">
-                <p class="text-gray-300 font-semibold mb-4 tracking-wide text-lg">Thanks for watching ✨</p>
-                
-                <a href="https://www.instagram.com/xo23.onlyone?igsh=bDc2OWp3Z2Y4anBp" target="_blank" class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 via-pink-600 to-yellow-500 px-5 py-2.5 rounded-full text-white font-medium hover:scale-105 transition shadow-lg shadow-pink-500/20 mb-4">
-                    <i class="fa-brands fa-instagram text-xl"></i>
-                    <span>Follow more on Instagram: <strong>@xo23.onlyone</strong></span>
-                </a>
-
-                <p class="text-xs text-gray-500 mt-2">Made by xo23.onlyone</p>
-            </div>
+    <div id="screen-2" class="screen">
+        <h2 id="recipient-greeting" style="font-size: 1.8rem; color: #fff;">A Special Gift For You!</h2>
+        <div class="gift-container" onclick="openGift()">
+            <div class="gift-box-icon">🎁</div>
         </div>
+        <p style="color: #aaa; font-size: 0.95rem;">Tap the gift box to open it</p>
+    </div>
+
+    <div id="screen-3" class="screen">
+        <h1 class="script-font" style="color: #ff416c; font-size: 4.5rem;">Happy Birthday! 🎉</h1>
+        <h2 id="wish-subtitle" style="font-size: 1.5rem; letter-spacing: 1px; margin-bottom: 10px;"></h2>
+        <div class="letter-card">
+            <p id="wish-message-text"></p>
+        </div>
+        <button class="btn-custom" onclick="nextScreen(4)">View Memories ➔</button>
+    </div>
+
+    <div id="screen-4" class="screen">
+        <h2 class="script-font" style="font-size: 3rem; color: #ff9a9e;">Sweet Memories ✨</h2>
+        <p style="font-size: 0.9rem; color: #ccc; margin-bottom: 10px;">Moments that will stay in heart forever.</p>
+        <div class="gallery-grid" id="dynamic-photo-grid">
+            </div>
+        <button class="btn-custom" onclick="nextScreen(5)" style="margin-top: 20px;">Final Note ➔</button>
+    </div>
+
+    <div id="screen-5" class="screen">
+        <div style="font-size: 60px; margin-bottom: 10px;">💖</div>
+        <h2 class="script-font" style="font-size: 3.8rem; color: #ff758c;">Stay Happy Always</h2>
+        <p id="sender-signature" style="font-size: 1.2rem; color: #ff9a9e; font-weight: 600; margin-top: 15px;"></p>
+        <button class="btn-custom" onclick="location.reload()" style="margin-top: 30px;">WATCH AGAIN 🔄</button>
     </div>
 
     <script>
-        const loadWishData = async () => {
-            const pathParts = window.location.pathname.split('/');
-            const wishId = pathParts[pathParts.length - 1];
+        // Extract Wish ID from URL path
+        const pathSegments = window.location.pathname.split('/');
+        const uniqueWishId = pathSegments[pathSegments.length - 1];
 
-            if (!wishId || wishId === 'w') return;
+        let wishDataObject = null;
 
+        async function fetchWishDetails() {
             try {
-                const response = await fetch(`/api/wish/data/${wishId}`);
-                const result = await response.json();
+                const res = await fetch(`/api/wish/${uniqueWishId}`);
+                const data = await res.json();
+                if(data) {
+                    wishDataObject = data;
+                    document.getElementById('recipient-greeting').innerText = `A Special Gift For You, ${data.recipientName}! 🎁`;
+                    document.getElementById('wish-subtitle').innerText = data.recipientName.toUpperCase();
+                    document.getElementById('wish-message-text').innerText = data.message;
+                    document.getElementById('sender-signature').innerText = `With endless love, ${data.senderName}`;
 
-                if (result.success) {
-                    const data = result.data;
-                    
-                    // Set Texts
-                    document.getElementById('displayReceiver').innerText = `Specially for you, ${data.receiverName}`;
-                    document.getElementById('displayLetter').innerText = data.letterText;
-                    document.getElementById('displaySender').innerText = `- Made with ❤️ by ${data.senderName}`;
-
-                    // Set Images if available
-                    if (data.images && data.images.length > 0) {
-                        const galleryContainer = document.getElementById('galleryContainer');
-                        const photoGallery = document.getElementById('photoGallery');
-                        
-                        galleryContainer.classList.remove('hidden'); // Show gallery section
-                        
-                        data.images.forEach(imgUrl => {
-                            const imgElement = document.createElement('img');
-                            imgElement.src = imgUrl;
-                            photoGallery.appendChild(imgElement);
+                    // Populate Photos
+                    const grid = document.getElementById('dynamic-photo-grid');
+                    grid.innerHTML = '';
+                    if(data.photos && data.photos.length > 0) {
+                        data.photos.forEach((photoUrl, index) => {
+                            grid.innerHTML += `
+                                <div class="gallery-item">
+                                    <img src="${photoUrl}" alt="Memory ${index + 1}">
+                                    <span>Memory #${index + 1} ✨</span>
+                                </div>
+                            `;
                         });
                     }
-
-                    // Switch from Loading to Intro Screen
-                    document.getElementById('loadingScreen').classList.remove('active');
-                    document.getElementById('introScreen').classList.add('active');
-                } else {
-                    document.getElementById('loadingScreen').innerHTML = "<h2 class='text-red-400 text-2xl'>Oops! This surprise couldn't be found. 💔</h2>";
                 }
-            } catch (error) {
-                document.getElementById('loadingScreen').innerHTML = "<h2 class='text-red-400 text-2xl'>Server Error. Please try again later.</h2>";
+            } catch (err) {
+                console.error('Failed to load wish data:', err);
             }
-        };
+        }
 
-        // Open Surprise Button Logic
-        document.getElementById('openSurpriseBtn').addEventListener('click', () => {
-            document.getElementById('introScreen').classList.remove('active');
-            document.getElementById('mainWishScreen').classList.add('active');
-            window.scrollTo(0, 0); // Scroll to top for the main screen
-        });
+        fetchWishDetails();
 
-        // Auto-run when the page loads
-        if (window.location.pathname.startsWith('/w/')) {
-            loadWishData();
+        function nextScreen(screenNum) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(`screen-${screenNum}`).classList.add('active');
+        }
+
+        function startExperience() {
+            nextScreen(2);
+            createFloatingHearts();
+        }
+
+        function openGift() {
+            // Unbox effect animation container
+            nextScreen(3);
+        }
+
+        function createFloatingHearts() {
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('floating-element');
+                heart.innerHTML = ['❤️', '✨', '💖', '🎉'][Math.floor(Math.random() * 4)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 4000);
+            }, 300);
         }
     </script>
 </body>
